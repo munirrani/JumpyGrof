@@ -1,0 +1,6 @@
+.idea/
+.git/
+*.~
+JumpyGrof.iml
+out/
+.DS_Store
