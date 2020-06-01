@@ -77,22 +77,97 @@ public class Simulation extends JFrame {
         while (!hasFormedColony) {
             for (int i = 0; i < kangarooList.size(); i++) {
                 Kangaroo currentKangaroo = kangarooList.get(i);
+                if (!currentKangaroo.isMale()) continue; // Only males allowed to hop
+                Point currentPoint = currentKangaroo.getCurrentPoint();
+                Point nextPoint = whereToMove(currentKangaroo, currentPoint);
+                if (nextPoint != null) move(currentKangaroo, currentPoint, nextPoint);
             }
             break;
         }
     }
 
-    private Point whereToMove(Point point) {
+    /*
+    Determines next point for kangaroo to hop
+    Returns null if kangaroo cannot move anywhere
+     */
+    private Point whereToMove(Kangaroo kangaroo, Point point) {
         LinkedList<Point> nodes = graph.getAdjascent(point);
         if (nodes.size() != 0) {
+            int max = 0;
+            Point to = null; // initialise variable
             for (int i = 0; i < nodes.size(); i++) {
-
+                Point possiblePoint = nodes.get(i);
+                if (possiblePoint.compareTo(point) == 0) continue; // No need to compare between same points
+                int worth = getPointWorth(kangaroo, possiblePoint);
+                System.out.println(kangaroo.toString() + " is considering " + possiblePoint.toString() + " with worth of " + worth);
+                if (worth > max) {
+                    max = worth;
+                    to = possiblePoint;
+                }
             }
+            return to;
         }
         return null;
     }
 
+    private int getFoodNeededToHop(Kangaroo kangaroo, Point to) {
+        int height = graph.getWeight(kangaroo.getCurrentPoint(), to);
+        return height + (kangaroo.getCurrentFoodAmount()/2);
+    }
+
+    private boolean hasEnoughFoodToHop(Kangaroo kangaroo, Point to) {
+        return kangaroo.getCurrentFoodAmount() >= getFoodNeededToHop(kangaroo, to);
+    }
+
+    private int getPossibleExtraFood(Kangaroo kangaroo, Point to) {
+        return to.getCurrentFoodAmount() - getFoodNeededToHop(kangaroo, to);
+    }
+
+    // TODO Figure out the best day to determine a point's worthiness
+    private int getPointWorth(Kangaroo kangaroo, Point to) {
+        // If has more females
+        // If has more food
+        // If has enough food
+        int worth = 0;
+        int foodNeeded = getFoodNeededToHop(kangaroo, to);
+        int extraFood = getPossibleExtraFood(kangaroo, to);
+        if (extraFood > 0)  {
+            worth += extraFood;
+        } else if (extraFood <= 0 && foodNeeded < kangaroo.getCurrentFoodAmount()) {
+            return 0; // not extra food and not enough food to hop, bail out
+        }
+
+        worth += to.getCurrentFemaleKangaroo();
+        worth += to.getCurrentFoodAmount();
+
+        return worth;
+    }
+
     public void move(Kangaroo kangaroo, Point from, Point to) {
+        System.out.println("Moving " + kangaroo.toString() + " from " + from.toString() + " to " + to.toString());
+        int foodInPouch = kangaroo.getCurrentFoodAmount();
+        int foodInPoint = to.getCurrentFoodAmount();
+        int foodNeeded = getFoodNeededToHop(kangaroo, to);
+
+        foodInPoint -= foodNeeded;
+        if (foodInPoint < 0) {
+            foodInPouch += foodInPoint; // Use up the remaining food needed in their pouch
+            foodInPoint = 0;
+        } else if (foodInPoint > 0) { // Kangaroo picks up the extra foods at destination point to its capacity
+            int extraFood = getPossibleExtraFood(kangaroo, to);
+            int capableTotalFood = foodInPouch + extraFood;
+            int difference = 0;
+            if (capableTotalFood > kangaroo.getCapacity()) { // If it exceeds what it can carry, sum it back to the difference
+                difference = capableTotalFood - kangaroo.getCapacity();
+                foodInPouch = kangaroo.getCapacity();
+            }
+            foodInPoint =  foodInPoint - extraFood + difference;
+            //foodInPoint =  foodInPoint - extraFood + (foodInPouch + extraFood - kangaroo.getCapacity());
+        }
+
+        kangaroo.setCurrentFoodAmount(foodInPouch);
+        to.setCurrentFoodAmount(foodInPoint);
+
         from.removeKangaroo(kangaroo);
         to.addKangaroo(kangaroo);
         if (to.getCurrentCapacity() == COLONY_MAX) {

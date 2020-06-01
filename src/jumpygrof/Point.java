@@ -28,6 +28,7 @@ public class Point implements Comparable<Point> {
     public void removeKangaroo(Kangaroo kangaroo) {
         kangaroo.setCurrentPoint(null);
         kangarooList.remove(kangaroo);
+
     }
     public int getCurrentFoodAmount() { return currentFoodAmount; }
     public void setCurrentFoodAmount(int amount) { currentFoodAmount = amount; }
@@ -43,8 +44,21 @@ public class Point implements Comparable<Point> {
         }
     }
 
+    public int getCurrentFemaleKangaroo() {
+        int count = 0;
+        for (int i = 0; i < kangarooList.size(); i++) {
+            Kangaroo currentKangaroo = kangarooList.get(i);
+            if (!currentKangaroo.isMale()) count++;
+        }
+        return count;
+    }
+
     @Override
     public int compareTo(Point o) { // Compare each Point by ID name
         return o.getID().compareTo(ID);
+    }
+
+    public String toString() {
+        return "Point " + ID;
     }
 }

@@ -30,4 +30,8 @@ public class Kangaroo implements Comparable<Kangaroo> {
     public int compareTo(Kangaroo kangaroo) {
         return kangaroo.getTotalKangarooNumber() - totalKangarooNumber;
     }
+
+    public String toString() {
+        return "Kangaroo " + ID;
+    }
 }
