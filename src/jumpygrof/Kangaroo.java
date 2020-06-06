@@ -8,6 +8,7 @@ public class Kangaroo implements Comparable<Kangaroo> {
     private int capacity;
     private int currentFoodAmount;
     private Point currentPoint;
+    private boolean isInAColony = false;
 
     public Kangaroo(boolean isMale, int capacity) {
         totalKangarooNumber++;
@@ -19,12 +20,14 @@ public class Kangaroo implements Comparable<Kangaroo> {
 
     public int getTotalKangarooNumber() { return totalKangarooNumber; }
     public String getID() { return ID; }
-    public boolean isMale() { return isMale; }
+    public boolean isFemale() { return isMale; }
     public int getCapacity() { return capacity; }
     public int getCurrentFoodAmount() { return currentFoodAmount; }
     public void setCurrentFoodAmount(int amount) { currentFoodAmount = amount; }
     public Point getCurrentPoint() { return currentPoint; }
     public void setCurrentPoint(Point point) { currentPoint = point; }
+    public boolean isInAColony(){ return isInAColony; }
+    public void setInAColony(boolean state) { isInAColony = state; }
 
     @Override
     public int compareTo(Kangaroo kangaroo) {

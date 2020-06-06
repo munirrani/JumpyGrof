@@ -10,8 +10,6 @@ public class Simulation extends JFrame {
     private Graph<Point, Integer> graph;
     private LinkedList<Point> pointList;
     private LinkedList<Kangaroo> kangarooList;
-    private int COLONY_MAX = 0;
-    private boolean hasFormedColony = false;
 
     Simulation() {
         setup();
@@ -46,19 +44,17 @@ public class Simulation extends JFrame {
 
 
         // Kangaroos
-        kangarooList.add(new Kangaroo(true, 6));
-        kangarooList.add(new Kangaroo(false, 5));
-        kangarooList.add(new Kangaroo(false, 3));
-        kangarooList.add(new Kangaroo(true, 10));
-        kangarooList.add(new Kangaroo(true, 6));
+        kangarooList.add(new Kangaroo(false, 6));
+        kangarooList.add(new Kangaroo(true, 5));
+        kangarooList.add(new Kangaroo(true, 3));
+        kangarooList.add(new Kangaroo(false, 10));
+        kangarooList.add(new Kangaroo(false, 6));
 
         pointList.get(0).addKangaroo(kangarooList.get(0));
         pointList.get(1).addKangaroo(kangarooList.get(1));
         pointList.get(3).addKangaroo(kangarooList.get(2));
         pointList.get(0).addKangaroo(kangarooList.get(3));
         pointList.get(2).addKangaroo(kangarooList.get(4));
-
-        COLONY_MAX = 3;
     }
 
     private void start() {
@@ -74,13 +70,13 @@ public class Simulation extends JFrame {
             System.out.println("Kangaroo " + currentKangaroo.getID() + " is now at Point " + currentKangaroo.getCurrentPoint().getID() +
                     " with food amount of " + currentKangaroo.getCurrentFoodAmount());
         }
-        while (!hasFormedColony) {
+        while (true) {
             for (int i = 0; i < kangarooList.size(); i++) {
                 Kangaroo currentKangaroo = kangarooList.get(i);
-                if (!currentKangaroo.isMale()) continue; // Only males allowed to hop
+                if (currentKangaroo.isFemale() || currentKangaroo.isInAColony()) continue; // Only males allowed to hop and only in colony
                 Point currentPoint = currentKangaroo.getCurrentPoint();
                 Point nextPoint = whereToMove(currentKangaroo, currentPoint);
-                if (nextPoint != null) move(currentKangaroo, currentPoint, nextPoint);
+                if (nextPoint != null && canHop(currentKangaroo, nextPoint)) move(currentKangaroo, currentPoint, nextPoint);
             }
             break;
         }
@@ -93,7 +89,7 @@ public class Simulation extends JFrame {
     private Point whereToMove(Kangaroo kangaroo, Point point) {
         LinkedList<Point> nodes = graph.getAdjascent(point);
         if (nodes.size() != 0) {
-            int max = 0;
+            int max = Integer.MIN_VALUE;
             Point to = null; // initialise variable
             for (int i = 0; i < nodes.size(); i++) {
                 Point possiblePoint = nodes.get(i);
@@ -115,31 +111,18 @@ public class Simulation extends JFrame {
         return height + (kangaroo.getCurrentFoodAmount()/2);
     }
 
-    private boolean hasEnoughFoodToHop(Kangaroo kangaroo, Point to) {
-        return kangaroo.getCurrentFoodAmount() >= getFoodNeededToHop(kangaroo, to);
+    private boolean canHop(Kangaroo kangaroo, Point to) {
+        return getFoodNeededToHop(kangaroo, to) <= (kangaroo.getCurrentFoodAmount() + to.getCurrentFoodAmount());
     }
 
     private int getPossibleExtraFood(Kangaroo kangaroo, Point to) {
         return to.getCurrentFoodAmount() - getFoodNeededToHop(kangaroo, to);
     }
 
-    // TODO Figure out the best day to determine a point's worthiness
     private int getPointWorth(Kangaroo kangaroo, Point to) {
-        // If has more females
-        // If has more food
-        // If has enough food
         int worth = 0;
-        int foodNeeded = getFoodNeededToHop(kangaroo, to);
-        int extraFood = getPossibleExtraFood(kangaroo, to);
-        if (extraFood > 0)  {
-            worth += extraFood;
-        } else if (extraFood <= 0 && foodNeeded < kangaroo.getCurrentFoodAmount()) {
-            return 0; // not extra food and not enough food to hop, bail out
-        }
-
+        worth += getPossibleExtraFood(kangaroo, to);
         worth += to.getCurrentFemaleKangaroo();
-        worth += to.getCurrentFoodAmount();
-
         return worth;
     }
 
@@ -162,7 +145,6 @@ public class Simulation extends JFrame {
                 foodInPouch = kangaroo.getCapacity();
             }
             foodInPoint =  foodInPoint - extraFood + difference;
-            //foodInPoint =  foodInPoint - extraFood + (foodInPouch + extraFood - kangaroo.getCapacity());
         }
 
         kangaroo.setCurrentFoodAmount(foodInPouch);
@@ -170,9 +152,5 @@ public class Simulation extends JFrame {
 
         from.removeKangaroo(kangaroo);
         to.addKangaroo(kangaroo);
-        if (to.getCurrentCapacity() == COLONY_MAX) {
-            System.out.println("Point " + to.getID() + " got to form a colony!");
-            hasFormedColony = true;
-        }
     }
 }
