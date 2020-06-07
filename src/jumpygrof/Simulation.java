@@ -59,18 +59,10 @@ public class Simulation extends JFrame {
 
     private void start() {
         // Kangaroo starts picking up the available food into their pouches
-        System.out.println("Current Food Available");
-        for (int i = 0; i < pointList.size(); i++) {
-            Point currentPoint = pointList.get(i);
-            currentPoint.startPickupFood();
-            System.out.println("Point " + currentPoint.getID() + " : " + currentPoint.getCurrentFoodAmount());
-        }
-        for (int i = 0; i < kangarooList.size(); i++) {
-            Kangaroo currentKangaroo = kangarooList.get(i);
-            System.out.println("Kangaroo " + currentKangaroo.getID() + " is now at Point " + currentKangaroo.getCurrentPoint().getID() +
-                    " with food amount of " + currentKangaroo.getCurrentFoodAmount());
-        }
-        while (true) {
+        for (int i = 0; i < pointList.size(); i++) pointList.get(i).startPickupFood();
+        printStatus();
+        int count = 0;
+        while (count != 5) { // For testing
             for (int i = 0; i < kangarooList.size(); i++) {
                 Kangaroo currentKangaroo = kangarooList.get(i);
                 if (currentKangaroo.isFemale() || currentKangaroo.isInAColony()) continue; // Only males allowed to hop and only in colony
@@ -78,8 +70,9 @@ public class Simulation extends JFrame {
                 Point nextPoint = whereToMove(currentKangaroo, currentPoint);
                 if (nextPoint != null && canHop(currentKangaroo, nextPoint)) move(currentKangaroo, currentPoint, nextPoint);
             }
-            break;
+            count++;
         }
+        printStatus();
     }
 
     /*
@@ -112,7 +105,13 @@ public class Simulation extends JFrame {
     }
 
     private boolean canHop(Kangaroo kangaroo, Point to) {
-        return getFoodNeededToHop(kangaroo, to) <= (kangaroo.getCurrentFoodAmount() + to.getCurrentFoodAmount());
+        if (to.isFull()) {
+            return false;
+        } else if (to.isAColony()) {
+            return getFoodNeededToHop(kangaroo, to) + to.getCurrentCapacity() <= (kangaroo.getCurrentFoodAmount() + to.getCurrentFoodAmount());
+        } else {
+            return getFoodNeededToHop(kangaroo, to) <= (kangaroo.getCurrentFoodAmount() + to.getCurrentFoodAmount());
+        }
     }
 
     private int getPossibleExtraFood(Kangaroo kangaroo, Point to) {
@@ -146,11 +145,28 @@ public class Simulation extends JFrame {
             }
             foodInPoint =  foodInPoint - extraFood + difference;
         }
+        if (to.isAColony()) {
+            System.out.println(kangaroo.toString() + " is sharing " + to.getCurrentCapacity() +
+                    " food to each kangaroo in " + to.toString());
+            foodInPouch -= to.getCurrentCapacity();
+        }
 
         kangaroo.setCurrentFoodAmount(foodInPouch);
         to.setCurrentFoodAmount(foodInPoint);
 
         from.removeKangaroo(kangaroo);
         to.addKangaroo(kangaroo);
+    }
+
+    private void printStatus() {
+        for (int i = 0; i < pointList.size(); i++) {
+            Point currentPoint = pointList.get(i);
+            System.out.println("Point " + currentPoint.getID() + " : " + currentPoint.getCurrentFoodAmount());
+        }
+        for (int i = 0; i < kangarooList.size(); i++) {
+            Kangaroo currentKangaroo = kangarooList.get(i);
+            System.out.println("Kangaroo " + currentKangaroo.getID() + " is now at Point " + currentKangaroo.getCurrentPoint().getID() +
+                    " with food amount of " + currentKangaroo.getCurrentFoodAmount());
+        }
     }
 }

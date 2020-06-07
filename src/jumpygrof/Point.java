@@ -26,7 +26,10 @@ public class Point implements Comparable<Point> {
     public void addKangaroo(Kangaroo kangaroo) {
         kangaroo.setCurrentPoint(this);
         kangarooList.add(kangaroo);
-        if (kangarooList.size() == COLONY_MAX) {
+        if (isAColony) {
+            System.out.println(kangaroo.toString() + " attempted to move into " + toString() + " colony!");
+            kangaroo.setInAColony(true);
+        } else if (kangarooList.size() == COLONY_MAX) {
             System.out.println("Point " + getID() + " got to form a colony!");
             isAColony = true;
             for (int i = 0; i < kangarooList.size(); i++) {
@@ -64,6 +67,7 @@ public class Point implements Comparable<Point> {
     }
 
     public boolean isAColony() { return isAColony; }
+    public boolean isFull() { return kangarooList.size() == kangarooCapacity; }
 
     @Override
     public int compareTo(Point o) { // Compare each Point by ID name
