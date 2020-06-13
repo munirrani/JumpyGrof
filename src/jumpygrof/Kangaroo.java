@@ -4,23 +4,23 @@ public class Kangaroo implements Comparable<Kangaroo> {
 
     private static int totalKangarooNumber = 0;
     private String ID;
-    private boolean isMale;
+    private boolean isFemale;
     private int capacity;
     private int currentFoodAmount;
     private Point currentPoint;
     private boolean isInAColony = false;
 
-    public Kangaroo(boolean isMale, int capacity) {
+    public Kangaroo(boolean isFemale, int capacity) {
         totalKangarooNumber++;
         ID = String.valueOf(totalKangarooNumber);
-        this.isMale = isMale;
+        this.isFemale = isFemale;
         this.capacity = capacity;
         currentFoodAmount = 0;
     }
 
     public int getTotalKangarooNumber() { return totalKangarooNumber; }
     public String getID() { return ID; }
-    public boolean isFemale() { return isMale; }
+    public boolean isFemale() { return isFemale; }
     public int getCapacity() { return capacity; }
     public int getCurrentFoodAmount() { return currentFoodAmount; }
     public void setCurrentFoodAmount(int amount) { currentFoodAmount = amount; }

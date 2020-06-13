@@ -142,6 +142,8 @@ public class Simulation extends JFrame {
             if (capableTotalFood > kangaroo.getCapacity()) { // If it exceeds what it can carry, sum it back to the difference
                 difference = capableTotalFood - kangaroo.getCapacity();
                 foodInPouch = kangaroo.getCapacity();
+            } else {
+                foodInPouch = capableTotalFood;
             }
             foodInPoint =  foodInPoint - extraFood + difference;
         }
