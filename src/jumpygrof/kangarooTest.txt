@@ -1,0 +1,6 @@
+Kangaroo
+m 6 0
+f 5 1
+f 3 3
+m 10 0
+m 6 2
