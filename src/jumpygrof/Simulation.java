@@ -4,6 +4,7 @@ import jumpygrof.datastructure.Graph;
 import jumpygrof.datastructure.LinkedList;
 
 import javax.swing.*;
+import jumpygrof.TextReader.TextReader;
 
 public class Simulation extends JFrame {
 
@@ -30,31 +31,63 @@ public class Simulation extends JFrame {
 
     private void addInput() {
         //Points and Edges
-        pointList.add(new Point("1", 16, 10));
-        pointList.add(new Point("2", 5, 3));
-        pointList.add(new Point("3", 10, 8));
-        pointList.add(new Point("4", 11, 6));
+        TextReader reader = new TextReader();
+        
+        //Initialize points
+        reader.read("pointTest.txt"); //read point input text file: pointTest.txt
+        while(!reader.getIdQueue().isEmpty()){
+            String idHolder = (String) reader.getIdQueue().dequeue();
+            int foodAvailableHolder = (int) reader.getFoodAvailableQueue().dequeue(), kangarooCapacityHolder = (int) reader.getKangarooCapacityQueue().dequeue();
+            pointList.add(new Point(idHolder, foodAvailableHolder, kangarooCapacityHolder));
+        }
+//        pointList.add(new Point("1", 20, 10));
+//        pointList.add(new Point("2", 5, 3));
+//        pointList.add(new Point("3", 10, 8));
+//        pointList.add(new Point("4", 11, 6));
 
         for (int i = 0; i < pointList.size(); i++) graph.addVertice(pointList.get(i));
+        
+        //Initialize point edges
+        while(!reader.getWeightQueue().isEmpty()){
+            int from = (int) reader.getFromQueue().dequeue();
+            int to = (int) reader.getToQueue().dequeue();
+            int weight = (int) reader.getWeightQueue().dequeue();
+            graph.addEdge(pointList.get(from), pointList.get(to), weight);
+        }
 
-        graph.addEdge(pointList.get(0), pointList.get(1), 4);
-        graph.addEdge(pointList.get(0), pointList.get(2), 1);
-        graph.addEdge(pointList.get(0), pointList.get(3), 5);
-        graph.addEdge(pointList.get(2), pointList.get(3), 3);
+//        graph.addEdge(pointList.get(0), pointList.get(1), 4);
+//        graph.addEdge(pointList.get(0), pointList.get(2), 1);
+//        graph.addEdge(pointList.get(0), pointList.get(3), 5);
+//        graph.addEdge(pointList.get(2), pointList.get(3), 3);
 
 
         // Kangaroos
-        kangarooList.add(new Kangaroo(false, 6));
-        kangarooList.add(new Kangaroo(true, 5));
-        kangarooList.add(new Kangaroo(true, 3));
-        kangarooList.add(new Kangaroo(false, 10));
-        kangarooList.add(new Kangaroo(false, 6));
+        
+        //Initialize kangaroos
+        reader.read("kangarooTest.txt"); //read kangaroo input text file: kangarooTest.txt
+        while(!reader.getGenderQueue().isEmpty()){
+            boolean genderHolder = (boolean) reader.getGenderQueue().dequeue();
+            int capacityHolder = reader.getCapacityQueue().dequeue();
+            kangarooList.add(new Kangaroo(genderHolder, capacityHolder));
+        }
+        
+//        kangarooList.add(new Kangaroo(false, 6));
+//        kangarooList.add(new Kangaroo(true, 5));
+//        kangarooList.add(new Kangaroo(true, 3));
+//        kangarooList.add(new Kangaroo(false, 10));
+//        kangarooList.add(new Kangaroo(false, 6));
+        
+        //Initialize kangaroo starting points
+        for(int i = 0; i<kangarooList.size(); i++){
+            int startingPointHolder = reader.getStartingPointQueue().dequeue();
+            pointList.get(startingPointHolder).addKangaroo(kangarooList.get(i));
+        }
 
-        pointList.get(0).addKangaroo(kangarooList.get(0));
-        pointList.get(1).addKangaroo(kangarooList.get(1));
-        pointList.get(3).addKangaroo(kangarooList.get(2));
-        pointList.get(0).addKangaroo(kangarooList.get(3));
-        pointList.get(2).addKangaroo(kangarooList.get(4));
+//        pointList.get(0).addKangaroo(kangarooList.get(0));
+//        pointList.get(1).addKangaroo(kangarooList.get(1));
+//        pointList.get(3).addKangaroo(kangarooList.get(2));
+//        pointList.get(0).addKangaroo(kangarooList.get(3));
+//        pointList.get(2).addKangaroo(kangarooList.get(4));
     }
 
     private void start() {
