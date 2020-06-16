@@ -4,6 +4,7 @@ import jumpygrof.datastructure.Graph;
 import jumpygrof.datastructure.LinkedList;
 
 import javax.swing.*;
+import jumpygrof.GraphDraw.GraphDraw;
 import jumpygrof.TextReader.TextReader;
 
 public class Simulation extends JFrame {
@@ -20,9 +21,10 @@ public class Simulation extends JFrame {
 
     private void setup() {
         // JFrame
-        setSize(600, 600);
-        setTitle("Jumpy Grof");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        GraphDraw frame = new GraphDraw("JumpyGrof", 600, 600);
+//        setSize(600, 600);
+//        setTitle("Jumpy Grof");
+//        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         graph = new Graph<>();
         pointList = new LinkedList();
