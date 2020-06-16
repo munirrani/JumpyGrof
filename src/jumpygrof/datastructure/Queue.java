@@ -1,5 +1,5 @@
 
-package jumpygrof.Queue;
+package jumpygrof.datastructure;
 
 public class Queue<T> {
     private ListNode head;
