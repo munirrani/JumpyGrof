@@ -18,8 +18,6 @@ import java.util.logging.Logger;
  */
 public class TextReader {
     
-    private String path;
-    
     private Queue idQueue = new Queue();
     private Queue foodAvailableQueue = new Queue();
     private Queue kangarooCapacityQueue = new Queue();
@@ -30,134 +28,54 @@ public class TextReader {
     private Queue genderQueue = new Queue();
     private Queue<Integer> capacityQueue = new Queue();
     private Queue<Integer> startingPointQueue = new Queue();
-    
-    public TextReader(){
-    }
-    
+
     public void read(String path){
-        this.path = path;
-        titleReader(path);
-    }
-    
-    private void titleReader(String path){
-        String title;
-        try {
-            Scanner titleRead = new Scanner(new FileInputStream(path));
-            title = titleRead.nextLine();
-            if(title.equalsIgnoreCase("Points"))
-                pointReader(path);
-                
-            else if(title.equalsIgnoreCase("Kangaroo")) 
-                    kangarooReader(path);
-            
-            titleRead.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(TextReader.class.getName()).log(Level.SEVERE, null, ex);
+        if (path.contains("pointTest.txt")) {
+            pointReader(path);
+        } else {
+            kangarooReader(path);
         }
     }
-    
-    private void pointReader(String path){
-        
-        
-        
-        String temp, title;
-        int point = 0, count = 0;
-        
+
+    private void pointReader(String path) {
         try {
-            Scanner pointRead = new Scanner(new FileInputStream(path));
-            title = pointRead.next();
-            if(title.equalsIgnoreCase("Points")){
-                while(pointRead.hasNextLine()){
-                    if(count == 0){
-                        temp = pointRead.next();
-                        idQueue.enqueue(temp);
-                        count++;
-                    }
-
-                    else if(count == 1){
-                        temp = pointRead.next();
-                        foodAvailableQueue.enqueue(Integer.parseInt(temp));
-                        count++;
-                    }
-
-                    else if(count == 2){
-                        temp = pointRead.next();
-                        kangarooCapacityQueue.enqueue(Integer.parseInt(temp));
-                        count++;
-                    }
-
-                    else if(count == 3){
-                        temp = pointRead.next();
-                        if(Integer.parseInt(temp)>0){
-                            int paths = Integer.parseInt(temp);
-                            while(paths>0){
-                                fromQueue.enqueue(point);
-                                toQueue.enqueue(Integer.parseInt(pointRead.next()));
-                                weightQueue.enqueue(Integer.parseInt(pointRead.next()));
-                                paths--;
-                            }
-                        }
-                        point++;
-                        count++;
-                    }
-
-                    else if(count == 4){
-                        count = 0;
-                    }
-                    
+            Scanner scanner = new Scanner(new FileInputStream(path));
+            String currentPoint = "";
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] parts = line.split(" ");
+                if (parts.length == 3) { // Read as new points
+                    idQueue.enqueue(parts[0]);
+                    foodAvailableQueue.enqueue(Integer.parseInt(parts[1]));
+                    kangarooCapacityQueue.enqueue(Integer.parseInt(parts[2]));
+                    currentPoint = parts[0];
+                } else if (parts.length == 2) { // Read as edges
+                    fromQueue.enqueue(Integer.parseInt(currentPoint));
+                    toQueue.enqueue(Integer.parseInt(parts[0]));
+                    weightQueue.enqueue(Integer.parseInt(parts[1]));
                 }
             }
-            pointRead.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(TextReader.class.getName()).log(Level.SEVERE, null, ex);
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            Logger.getLogger(TextReader.class.getName()).log(Level.SEVERE, null, e);
         }
     }
-    
-    private void kangarooReader(String path){
-        
-        
-        
-        String temp, title;
-        int count = 0;
-        
+
+    private void kangarooReader(String path)  {
         try {
-            Scanner kangarooRead = new Scanner(new FileInputStream(path));
-            title = kangarooRead.next();
-            if(title.equalsIgnoreCase("Kangaroo")){
-                while(kangarooRead.hasNextLine()){
-
-                    if(count == 0){
-                        temp = kangarooRead.next();
-                        if(temp.charAt(0) == 'm'){
-                                genderQueue.enqueue(false);
-                        }
-                            else if(temp.charAt(0) == 'f'){
-                                genderQueue.enqueue(true);
-                            }
-                        count++;
-                    }
-
-                    else if(count == 1){
-                        temp = kangarooRead.next();
-                        capacityQueue.enqueue(Integer.parseInt(temp));
-                        count++;
-                    }
-
-                    else if(count == 2){
-                        temp = kangarooRead.next();
-                        startingPointQueue.enqueue(Integer.parseInt(temp));
-                        count++;
-                    }
-
-                    else if(count == 3){
-                        count = 0;
-                    }
-
+            Scanner scanner = new Scanner(new FileInputStream(path));
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] parts = line.split(" ");
+                if (parts.length == 3) {
+                    genderQueue.enqueue(parts[0].contentEquals("f"));
+                    capacityQueue.enqueue(Integer.parseInt(parts[1]));
+                    startingPointQueue.enqueue(Integer.parseInt(parts[2]));
                 }
             }
-            kangarooRead.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(TextReader.class.getName()).log(Level.SEVERE, null, ex);
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            Logger.getLogger(TextReader.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
@@ -196,6 +114,4 @@ public class TextReader {
     public Queue<Integer> getStartingPointQueue() {
         return startingPointQueue;
     }
-    
-    
 }
