@@ -34,7 +34,7 @@ public class Simulation extends JFrame {
         TextReader reader = new TextReader();
         
         //Initialize points
-        reader.read("pointTest.txt"); //read point input text file: pointTest.txt
+        reader.read("src/jumpygrof/pointTest.txt"); //read point input text file: pointTest.txt
         while(!reader.getIdQueue().isEmpty()){
             String idHolder = (String) reader.getIdQueue().dequeue();
             int foodAvailableHolder = (int) reader.getFoodAvailableQueue().dequeue(), kangarooCapacityHolder = (int) reader.getKangarooCapacityQueue().dequeue();
@@ -64,7 +64,7 @@ public class Simulation extends JFrame {
         // Kangaroos
         
         //Initialize kangaroos
-        reader.read("kangarooTest.txt"); //read kangaroo input text file: kangarooTest.txt
+        reader.read("src/jumpygrof/kangarooTest.txt"); //read kangaroo input text file: kangarooTest.txt
         while(!reader.getGenderQueue().isEmpty()){
             boolean genderHolder = (boolean) reader.getGenderQueue().dequeue();
             int capacityHolder = reader.getCapacityQueue().dequeue();
