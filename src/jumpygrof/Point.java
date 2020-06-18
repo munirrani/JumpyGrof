@@ -72,6 +72,8 @@ public class Point implements Comparable<Point> {
 
     public int getTotalColony() { return totalColony; }
 
+    public void generateFood() { currentFoodAmount = foodAvailable; }
+
     @Override
     public int compareTo(Point o) { // Compare each Point by ID name
         return o.getID().compareTo(ID);

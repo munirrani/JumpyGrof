@@ -12,11 +12,18 @@ public class Simulation extends JFrame {
     private LinkedList<Point> pointList;
     private LinkedList<Kangaroo> kangarooList;
     private int hopCount = 0;
+    private boolean foodRegeneration = true;
+    private static final int FOOD_REGENERATION_INTERVAL = 25; // How many kangaroo hops before generate
 
     Simulation() {
         setup();
         addInput();
         start();
+    }
+
+    Simulation(boolean hasFoodRegeneration) {
+        this();
+        foodRegeneration = hasFoodRegeneration;
     }
 
     private void setup() {
@@ -167,6 +174,11 @@ public class Simulation extends JFrame {
 
         from.removeKangaroo(kangaroo);
         to.addKangaroo(kangaroo);
+
+        if(foodRegeneration && hopCount % FOOD_REGENERATION_INTERVAL == 0) {
+            for (int i = 0; i < pointList.size(); i++) pointList.get(i).generateFood();
+            System.out.println("Food has been regenerated");
+        }
     }
 
     private void printStatus() {
