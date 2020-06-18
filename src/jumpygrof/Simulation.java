@@ -11,6 +11,7 @@ public class Simulation extends JFrame {
     private Graph<Point, Integer> graph;
     private LinkedList<Point> pointList;
     private LinkedList<Kangaroo> kangarooList;
+    private int hopCount = 0;
 
     Simulation() {
         setup();
@@ -70,7 +71,7 @@ public class Simulation extends JFrame {
         for (int i = 0; i < pointList.size(); i++) pointList.get(i).startPickupFood();
         printStatus();
         int count = 0;
-        while (count != 5) { // For testing
+        while (count != 50) {
             for (int i = 0; i < kangarooList.size(); i++) {
                 Kangaroo currentKangaroo = kangarooList.get(i);
                 if (currentKangaroo.isFemale() || currentKangaroo.isInAColony()) continue; // Only males allowed to hop and only in colony
@@ -81,6 +82,8 @@ public class Simulation extends JFrame {
             count++;
         }
         printStatus();
+        System.out.println("Total hop count : " + hopCount);
+        System.out.println("There are " + pointList.get(0).getTotalColony() + " colonies");
     }
 
     /*
@@ -91,12 +94,11 @@ public class Simulation extends JFrame {
         LinkedList<Point> nodes = graph.getAdjascent(point);
         if (nodes.size() != 0) {
             int max = Integer.MIN_VALUE;
-            Point to = null; // initialise variable
+            Point to = null;
             for (int i = 0; i < nodes.size(); i++) {
                 Point possiblePoint = nodes.get(i);
                 if (possiblePoint.compareTo(point) == 0 || possiblePoint.isFull()) continue;
                 int worth = getPointWorth(kangaroo, possiblePoint);
-                System.out.println(kangaroo.toString() + " is considering " + possiblePoint.toString() + " with worth of " + worth);
                 if (worth > max) {
                     max = worth;
                     to = possiblePoint;
@@ -134,6 +136,7 @@ public class Simulation extends JFrame {
     }
 
     public void move(Kangaroo kangaroo, Point from, Point to) {
+        hopCount++;
         System.out.println("Moving " + kangaroo.toString() + " from " + from.toString() + " to " + to.toString());
         int foodInPouch = kangaroo.getCurrentFoodAmount();
         int foodInPoint = to.getCurrentFoodAmount();
@@ -156,8 +159,6 @@ public class Simulation extends JFrame {
             foodInPoint =  foodInPoint - extraFood + difference;
         }
         if (to.isAColony()) {
-            System.out.println(kangaroo.toString() + " is sharing " + to.getCurrentCapacity() +
-                    " food to each kangaroo in " + to.toString());
             foodInPouch -= to.getCurrentCapacity();
         }
 

@@ -4,7 +4,8 @@ import jumpygrof.datastructure.LinkedList;
 
 public class Point implements Comparable<Point> {
 
-    private static final int COLONY_MAX = 3;
+    private static final int COLONY_MAX = 5;
+    private static int totalColony = 0;
 
     private String ID;
     private int foodAvailable;
@@ -26,16 +27,16 @@ public class Point implements Comparable<Point> {
     public void addKangaroo(Kangaroo kangaroo) {
         kangaroo.setCurrentPoint(this);
         kangarooList.add(kangaroo);
-        if (isAColony) {
-            System.out.println(kangaroo.toString() + " attempted to move into " + toString() + " colony!");
-            kangaroo.setInAColony(true);
-        } else if (kangarooList.size() == COLONY_MAX) {
-            System.out.println("Point " + getID() + " got to form a colony!");
+        if (kangarooList.size() == COLONY_MAX) {
+            System.out.println(toString() + " got to form a colony!");
+            totalColony++;
             isAColony = true;
             for (int i = 0; i < kangarooList.size(); i++) {
                 Kangaroo currentKangaroo = kangarooList.get(i);
                 currentKangaroo.setInAColony(true);
             }
+        } else if (isFull()) {
+            System.out.println(toString() + " is full!");
         }
     }
 
@@ -68,6 +69,8 @@ public class Point implements Comparable<Point> {
 
     public boolean isAColony() { return isAColony; }
     public boolean isFull() { return kangarooList.size() == kangarooCapacity; }
+
+    public int getTotalColony() { return totalColony; }
 
     @Override
     public int compareTo(Point o) { // Compare each Point by ID name
