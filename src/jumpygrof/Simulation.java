@@ -94,7 +94,7 @@ public class Simulation extends JFrame {
             Point to = null; // initialise variable
             for (int i = 0; i < nodes.size(); i++) {
                 Point possiblePoint = nodes.get(i);
-                if (possiblePoint.compareTo(point) == 0) continue; // No need to compare between same points
+                if (possiblePoint.compareTo(point) == 0 || possiblePoint.isFull()) continue;
                 int worth = getPointWorth(kangaroo, possiblePoint);
                 System.out.println(kangaroo.toString() + " is considering " + possiblePoint.toString() + " with worth of " + worth);
                 if (worth > max) {
