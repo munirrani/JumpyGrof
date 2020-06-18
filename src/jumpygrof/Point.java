@@ -35,9 +35,10 @@ public class Point implements Comparable<Point> {
                 Kangaroo currentKangaroo = kangarooList.get(i);
                 currentKangaroo.setInAColony(true);
             }
-        } else if (isFull()) {
-            System.out.println(toString() + " is full!");
+        } else if (kangarooList.size() > COLONY_MAX) {
+            kangaroo.setInAColony(true);
         }
+        if (isFull()) System.out.println(toString() + " is full!");
     }
 
     public void removeKangaroo(Kangaroo kangaroo) {
