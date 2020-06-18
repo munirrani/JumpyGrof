@@ -111,6 +111,7 @@ public class Simulation extends JFrame {
                     to = possiblePoint;
                 }
             }
+            if (max < 0) return null;
             return to;
         }
         return null;
@@ -139,6 +140,7 @@ public class Simulation extends JFrame {
         int worth = 0;
         worth += getPossibleExtraFood(kangaroo, to);
         worth += to.getCurrentFemaleKangaroo();
+        if (getPossibleExtraFood(kangaroo, to) < 0) return -1;
         return worth;
     }
 
@@ -192,7 +194,7 @@ public class Simulation extends JFrame {
                     " with food amount of " + currentKangaroo.getCurrentFoodAmount());
         }
     }
-    
+
     private void printColony() {
         System.out.println("Total colonies: " + pointList.get(0).getTotalColony());
         for (int i = 0; i < pointList.size(); i++) {
