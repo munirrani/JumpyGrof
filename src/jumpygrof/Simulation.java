@@ -90,7 +90,7 @@ public class Simulation extends JFrame {
         }
         printStatus();
         System.out.println("Total hop count : " + hopCount);
-        System.out.println("There are " + pointList.get(0).getTotalColony() + " colonies");
+        printColony();
     }
 
     /*
@@ -190,6 +190,18 @@ public class Simulation extends JFrame {
             Kangaroo currentKangaroo = kangarooList.get(i);
             System.out.println("Kangaroo " + currentKangaroo.getID() + " is now at Point " + currentKangaroo.getCurrentPoint().getID() +
                     " with food amount of " + currentKangaroo.getCurrentFoodAmount());
+        }
+    }
+    
+    private void printColony() {
+        System.out.println("Total colonies: " + pointList.get(0).getTotalColony());
+        for (int i = 0; i < pointList.size(); i++) {
+            Point currentPoint = pointList.get(i);
+            if (currentPoint.isAColony()) {
+                System.out.print(currentPoint.toString());
+                if (currentPoint.isFull()) System.out.print(" (Full)");
+                System.out.println();
+            }
         }
     }
 }
