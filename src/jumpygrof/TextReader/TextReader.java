@@ -5,6 +5,7 @@
  */
 package jumpygrof.TextReader;
 
+import jumpygrof.datastructure.LinkedList;
 import jumpygrof.datastructure.Queue;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,11 +29,13 @@ public class TextReader {
     private Queue genderQueue = new Queue();
     private Queue<Integer> capacityQueue = new Queue();
     private Queue<Integer> startingPointQueue = new Queue();
+    private LinkedList<Integer> fromArray = new LinkedList();
+    private LinkedList<Integer> toArray = new LinkedList();
 
     public void read(String path){
         if (path.contains("pointTest.txt")) {
             pointReader(path);
-        } else {
+        } else if (path.contains("kangarooTest.txt")){
             kangarooReader(path);
         }
     }
@@ -51,7 +54,9 @@ public class TextReader {
                     currentPoint = parts[0];
                 } else if (parts.length == 2) { // Read as edges
                     fromQueue.enqueue(Integer.parseInt(currentPoint));
+                    fromArray.add(Integer.parseInt(currentPoint));
                     toQueue.enqueue(Integer.parseInt(parts[0]));
+                    toArray.add(Integer.parseInt(parts[0]));
                     weightQueue.enqueue(Integer.parseInt(parts[1]));
                 }
             }
@@ -113,5 +118,13 @@ public class TextReader {
 
     public Queue<Integer> getStartingPointQueue() {
         return startingPointQueue;
+    }
+
+    public LinkedList<Integer> getFromList() {
+        return fromArray;
+    }
+
+    public LinkedList<Integer> getToList() {
+        return toArray;
     }
 }

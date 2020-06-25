@@ -4,14 +4,17 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
-public class DraggableNode extends JLabel {
+public class PointBox extends JLabel {
 
-    public DraggableNode(int x, int y) {
-        setBorder(new LineBorder(Color.BLUE, 3));
+    public static final int NODE_SIZE = 25;
+
+    public PointBox(String text, int x, int y) {
+        setBorder(new LineBorder(Color.YELLOW, 3));
         setBackground(Color.WHITE);
-        setBounds(x, y, 30, 25);
+        setBounds(x, y, NODE_SIZE, NODE_SIZE);
         setOpaque(true);
         setHorizontalAlignment(JLabel.CENTER);
         setVerticalAlignment(JLabel.CENTER);
+        setText(text);
     }
 }

@@ -3,21 +3,35 @@ package jumpygrof;
 import jumpygrof.datastructure.Graph;
 import jumpygrof.datastructure.LinkedList;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import jumpygrof.TextReader.TextReader;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class Simulation extends JFrame {
 
+    private int hopCount = 0;
     private Graph<Point, Integer> graph;
     private LinkedList<Point> pointList;
     private LinkedList<Kangaroo> kangarooList;
-    private int hopCount = 0;
-    private boolean foodRegeneration = true;
-    private static final int FOOD_REGENERATION_INTERVAL = 25; // How many kangaroo hops before generate
+    private TextReader reader = new TextReader();
+    private boolean foodRegeneration = false;
+    private static final int FOOD_REGENERATION_INTERVAL = 23; // How many kangaroo hops before generate
+
+    //JFrame Stuff
+    private NodePanel nodePanel = new NodePanel();
+    private ArrayList<PointBox> nodeArrayList = new ArrayList<>();
+    private BufferedImage background;
 
     Simulation() {
-        setup();
+        simulationSetup();
         addInput();
+        JFrameSetup();
         start();
     }
 
@@ -26,22 +40,28 @@ public class Simulation extends JFrame {
         foodRegeneration = hasFoodRegeneration;
     }
 
-    private void setup() {
-        // JFrame
-        setSize(600, 600);
-        setTitle("Jumpy Grof");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+    private void simulationSetup() {
         graph = new Graph<>();
         pointList = new LinkedList();
         kangarooList = new LinkedList();
     }
 
+    private void JFrameSetup() {
+        try {
+            background = ImageIO.read(new File("src/jumpygrof/Background.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        initNodes();
+        setSize(600, 600);
+        setTitle("Jumpy Grof");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+
     private void addInput() {
-        TextReader reader = new TextReader();
-        
         //Initialize points
-        reader.read("src/jumpygrof/pointTest.txt"); //read point input text file: pointTest.txt
+        reader.read("src/jumpygrof/pointTest.txt");
         while(!reader.getIdQueue().isEmpty()){
             String idHolder = (String) reader.getIdQueue().dequeue();
             int foodAvailableHolder = (int) reader.getFoodAvailableQueue().dequeue(), kangarooCapacityHolder = (int) reader.getKangarooCapacityQueue().dequeue();
@@ -59,7 +79,7 @@ public class Simulation extends JFrame {
         }
         
         //Initialize kangaroos
-        reader.read("src/jumpygrof/kangarooTest.txt"); //read kangaroo input text file: kangarooTest.txt
+        reader.read("src/jumpygrof/kangarooTest.txt");
         while(!reader.getGenderQueue().isEmpty()){
             boolean genderHolder = (boolean) reader.getGenderQueue().dequeue();
             int capacityHolder = reader.getCapacityQueue().dequeue();
@@ -89,6 +109,7 @@ public class Simulation extends JFrame {
             count++;
         }
         printStatus();
+        System.out.println();
         System.out.println("Total hop count : " + hopCount);
         printColony();
     }
@@ -177,6 +198,9 @@ public class Simulation extends JFrame {
         from.removeKangaroo(kangaroo);
         to.addKangaroo(kangaroo);
 
+        System.out.println(to.toString() + " now has " + to.getCurrentFemaleKangaroo() + "F " +
+                (to.getCurrentCapacity() - to.getCurrentFemaleKangaroo()) + "M");
+
         if(foodRegeneration && hopCount % FOOD_REGENERATION_INTERVAL == 0) {
             for (int i = 0; i < pointList.size(); i++) pointList.get(i).generateFood();
             System.out.println("Food has been regenerated");
@@ -190,8 +214,13 @@ public class Simulation extends JFrame {
         }
         for (int i = 0; i < kangarooList.size(); i++) {
             Kangaroo currentKangaroo = kangarooList.get(i);
-            System.out.println("Kangaroo " + currentKangaroo.getID() + " is now at Point " + currentKangaroo.getCurrentPoint().getID() +
-                    " with food amount of " + currentKangaroo.getCurrentFoodAmount());
+            if (!currentKangaroo.isFemale()) {
+                System.out.println("Kangaroo(M) " + currentKangaroo.getID() + " is now at Point " + currentKangaroo.getCurrentPoint().getID() +
+                        " with food amount of " + currentKangaroo.getCurrentFoodAmount());
+            } else {
+                System.out.println("Kangaroo(F) " + currentKangaroo.getID() + " is now at Point " + currentKangaroo.getCurrentPoint().getID() +
+                        " with food amount of " + currentKangaroo.getCurrentFoodAmount());
+            }
         }
     }
 
@@ -203,6 +232,77 @@ public class Simulation extends JFrame {
                 System.out.print(currentPoint.toString());
                 if (currentPoint.isFull()) System.out.print(" (Full)");
                 System.out.println();
+            }
+        }
+    }
+
+    private void initNodes() {
+        PointBox node1 = new PointBox(pointList.get(0).getID(), 410, 270);
+        PointBox node2 = new PointBox(pointList.get(1).getID(),240, 290);
+        PointBox node3 = new PointBox(pointList.get(2).getID(),340, 330);
+        PointBox node4 = new PointBox(pointList.get(3).getID(),500, 260);
+        PointBox node5 = new PointBox(pointList.get(4).getID(),420, 380);
+        PointBox node6 = new PointBox(pointList.get(5).getID(),470, 450);
+        PointBox node7 = new PointBox(pointList.get(6).getID(),520, 350);
+        PointBox node8 = new PointBox(pointList.get(7).getID(),290, 360);
+        PointBox node9 = new PointBox(pointList.get(8).getID(),180, 380);
+        PointBox node10 = new PointBox(pointList.get(9).getID(),90, 340);
+        PointBox node11 = new PointBox(pointList.get(10).getID(),70, 260);
+        PointBox node12 = new PointBox(pointList.get(11).getID(),150, 240);
+        PointBox node13 = new PointBox(pointList.get(12).getID(),200, 190);
+        PointBox node14 = new PointBox(pointList.get(13).getID(),270, 230);
+        PointBox node15 = new PointBox(pointList.get(14).getID(),250, 160);
+        PointBox node16 = new PointBox(pointList.get(15).getID(),350, 220);
+        PointBox node17 = new PointBox(pointList.get(16).getID(),360, 180);
+        PointBox node18 = new PointBox(pointList.get(17).getID(),450, 180);
+        PointBox node19 = new PointBox(pointList.get(18).getID(),445, 130);
+
+        nodeArrayList.add(node1);
+        nodeArrayList.add(node2);
+        nodeArrayList.add(node3);
+        nodeArrayList.add(node4);
+        nodeArrayList.add(node5);
+        nodeArrayList.add(node6);
+        nodeArrayList.add(node7);
+        nodeArrayList.add(node8);
+        nodeArrayList.add(node9);
+        nodeArrayList.add(node10);
+        nodeArrayList.add(node11);
+        nodeArrayList.add(node12);
+        nodeArrayList.add(node13);
+        nodeArrayList.add(node14);
+        nodeArrayList.add(node15);
+        nodeArrayList.add(node16);
+        nodeArrayList.add(node17);
+        nodeArrayList.add(node18);
+        nodeArrayList.add(node19);
+
+        for (PointBox node : nodeArrayList) {
+            nodePanel.add(node);
+        }
+
+        add(nodePanel);
+    }
+
+    class NodePanel extends JPanel {
+
+        int nodeSize = PointBox.NODE_SIZE;
+        LinkedList<Integer> fromList = reader.getFromList();
+        LinkedList<Integer> toList = reader.getToList();
+
+        public NodePanel() {
+            setLayout(null);
+        }
+
+        @Override
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            g.drawImage(background, 0,0, (int)getSize().getWidth(), (int)getSize().getHeight(), null);
+            for (int i = 0; i < fromList.size(); i++) {
+                int fromPoint = fromList.get(i) - 1;
+                int toPoint = toList.get(i) - 1;
+                g.drawLine(nodeArrayList.get(fromPoint).getX() + nodeSize/2, nodeArrayList.get(fromPoint).getY() + nodeSize/2,
+                        nodeArrayList.get(toPoint).getX() + nodeSize/2, nodeArrayList.get(toPoint).getY() + nodeSize/2);
             }
         }
     }
